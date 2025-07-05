@@ -7,8 +7,12 @@ website:
     left:
       - href: index.qmd
         text: Home
-      - href: analysis.qmd
-        text: Analysis
+      - text: Diabetes Analysis
+        menu:
+          - text: "Static Analysis"
+            href: analysis.qmd
+          - text: "Shiny App"
+            href: shiny-app.qmd
       - href: about.qmd
         text: About
 
@@ -19,6 +23,6 @@ format:
       - brand
     css: styles.css
     toc: true
+    embed-resources: false
 
-
-
+    

@@ -1,0 +1,82 @@
+---
+title: "Untitled"
+format: html
+---
+
+
+
+```{{shintylive-r}}
+#| standalone: true
+#| viewerHeight: 650
+
+library(shiny)
+library(tidyverse)
+
+# Load dataset and train the model
+url <- "https://raw.githubusercontent.com/plotly/datasets/master/diabetes.csv"
+diabetes <- read_csv(url)
+
+cols_with_zero <- c("Glucose", "BloodPressure", "SkinThickness", "Insulin", "BMI")
+diabetes[cols_with_zero] <- diabetes[cols_with_zero] |> 
+  mutate(across(everything(), ~na_if(., 0)))
+
+diabetes_clean <- diabetes |> drop_na()
+
+model <- glm(Outcome ~ ., data = diabetes_clean, family = binomial(link = "logit"))
+
+# UI
+ui <- fluidPage(
+  titlePanel("Diabetes Risk Predictor"),
+  sidebarLayout(
+    sidebarPanel(
+      sliderInput("Pregnancies", "Pregnancies", 0, 17, 1),
+      sliderInput("Glucose", "Glucose Level", 50, 200, 120),
+      sliderInput("BloodPressure", "Blood Pressure", 30, 122, 70),
+      sliderInput("SkinThickness", "Skin Thickness", 7, 99, 20),
+      sliderInput("Insulin", "Insulin", 15, 846, 79),
+      sliderInput("BMI", "BMI", 15, 70, 30),
+      sliderInput("DiabetesPedigreeFunction", "Pedigree Function", 0.1, 2.5, 0.5, step = 0.01),
+      sliderInput("Age", "Age", 21, 81, 33)
+    ),
+    mainPanel(
+      h3("Predicted Probability of Diabetes:"),
+      textOutput("prediction"),
+      plotOutput("gauge")
+    )
+  )
+)
+
+# Server
+server <- function(input, output) {
+  patient <- reactive({
+    data.frame(
+      Pregnancies = input$Pregnancies,
+      Glucose = input$Glucose,
+      BloodPressure = input$BloodPressure,
+      SkinThickness = input$SkinThickness,
+      Insulin = input$Insulin,
+      BMI = input$BMI,
+      DiabetesPedigreeFunction = input$DiabetesPedigreeFunction,
+      Age = input$Age
+    )
+  })
+  
+  output$prediction <- renderText({
+    prob <- predict(model, newdata = patient(), type = "response")
+    paste0(round(prob * 100, 1), "% chance of diabetes")
+  })
+  
+  output$gauge <- renderPlot({
+    prob <- predict(model, newdata = patient(), type = "response")
+    df <- data.frame(category = "Risk", prob = prob)
+    ggplot(df, aes(y = category, x = prob)) +
+      geom_col(fill = "#2c7fb8") +
+      xlim(0, 1) +
+      labs(x = "Probability", y = "", title = "Risk Level") +
+      theme_minimal() +
+      theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
+  })
+}
+
+shinyApp(ui = ui, server = server)
+```
