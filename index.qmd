@@ -2,6 +2,6 @@
 title: "Diabetes Predictor"
 ---
 
-This is a Quarto website.
+## Can a few health stats reveal the risk of diabetes?
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+Using real-world data from Pima Indigenous women, this project explores how Bayesian modeling can predict the likelihood of Type 2 diabetes — not with magic, but with math. By blending clinical insights with statistical power, we aim to transform raw numbers into meaningful predictions. Scroll on to see how probability meets public health.

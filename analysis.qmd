@@ -1,0 +1,54 @@
+---
+format: html
+execute: 
+  warning: FALSE
+  message: FALSE
+  echo: FALSE
+---
+
+```{r}
+#| label: setup
+library(tidyverse)
+library(readr)
+library(broom)
+url <- "https://raw.githubusercontent.com/plotly/datasets/master/diabetes.csv"
+diabetes <- read_csv(url)
+
+cols_with_zero <- c("Glucose", "BloodPressure", "SkinThickness", "Insulin", "BMI")
+diabetes[cols_with_zero] <- diabetes[cols_with_zero] |> 
+  mutate(across(everything(), ~na_if(., 0)))
+
+diabetes_clean <- diabetes |> drop_na()
+```
+
+```{r}
+model <- glm(Outcome ~ ., 
+             data = diabetes_clean, 
+             family = binomial(link = "logit"))
+```
+
+```{r}
+coef_df <- tidy(model) |> 
+  filter(term != "(Intercept)") |> 
+  mutate(term = fct_reorder(term, estimate))
+
+ggplot(coef_df, aes(x = estimate, y = term)) +
+  geom_point(color = "#2c7fb8", size = 3) +
+  geom_errorbarh(aes(xmin = estimate - std.error*1.96, xmax = estimate + std.error*1.96), height = 0, color = "#2c7fb8") +
+  labs(title = "Logistic Regression Coefficients with 95% Confidence Intervals",
+       x = "Estimate",
+       y = NULL) +
+  theme_minimal()
+```
+
+
+```{r}
+pred_probs <- predict(model, type = "response")
+
+ggplot(data.frame(prob = pred_probs), aes(x = prob)) +
+  geom_histogram(binwidth = 0.05, fill = "#2c7fb8", color = "white") +
+  labs(title = "Distribution of Predicted Diabetes Probabilities",
+       x = "Predicted Probability",
+       y = "Number of Patients") +
+  theme_minimal()
+```
