@@ -41,6 +41,16 @@ ggplot(coef_df, aes(x = estimate, y = term)) +
   theme_minimal()
 ```
 
+### What This Means
+
+This chart shows how each variable in the dataset influences the model's prediction of diabetes.
+
+- **DiabetesPedigreeFunction** has the largest positive coefficient, meaning that patients with a stronger genetic predisposition are more likely to have diabetes — although the wide confidence interval means this result is uncertain.
+- **Glucose**, **BMI**, and **Pregnancies** are meaningful predictors — as these values increase, the likelihood of diabetes also increases.
+- Variables like **BloodPressure**, **Insulin**, and **SkinThickness** show little or no strong effect in this model.
+- If the horizontal bar crosses the vertical line at 0, the effect of that variable isn't statistically significant.
+
+This helps identify which health factors are most influential in predicting diabetes.
 
 ```{r}
 pred_probs <- predict(model, type = "response")
@@ -52,3 +62,13 @@ ggplot(data.frame(prob = pred_probs), aes(x = prob)) +
        y = "Number of Patients") +
   theme_minimal()
 ```
+
+### What This Means
+
+This histogram shows how likely each patient in the dataset is predicted to have diabetes.
+
+- Most predictions are low (under 0.3), meaning the model classifies most patients as **low-risk**.
+- There’s also a clear group of patients with **high predicted probabilities** (above 0.7), meaning the model is confident that they are **likely to have diabetes**.
+- The spread across the whole probability range shows that the model doesn't just guess yes or no — it gives a nuanced prediction for each person.
+
+This distribution confirms that the model can distinguish between low-risk and high-risk individuals.

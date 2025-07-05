@@ -2,6 +2,8 @@
 title: "Diabetes Predictor"
 ---
 
-## Can a few health stats reveal the risk of diabetes?
+## Can clinical data really help predict diabetes?
 
-Using real-world data from Pima Indigenous women, this project explores how Bayesian modeling can predict the likelihood of Type 2 diabetes — not with magic, but with math. By blending clinical insights with statistical power, we aim to transform raw numbers into meaningful predictions. Scroll on to see how probability meets public health.
+Type 2 diabetes is a chronic condition affecting millions and early detection is key. In this project, we explore a real medical dataset from Pima Indigenous women to build a logistic regression model that predicts the likelihood of diabetes using only 8 routine health measurements, including glucose levels, BMI, age, and insulin.
+
+By analyzing these variables, we uncover which health factors matter most and visualize how the model interprets patient data. The goal is to turn numbers into meaningful risk insights, using simple statistical tools to support smarter, earlier intervention.
